@@ -44,10 +44,12 @@ class Q2 {
 const double PI = acos(-1.0);
 
 double my_function(double x) {
-	return sin(x);
+	return sqrt(4.0 - sin(x) * sin(x));
 }
 
 int main() {
-	cout << fixed << setprecision(8) << Q2::simpson(0, PI, 20, my_function) << endl;
+	cout << fixed << setprecision(8);
+	cout << Q2::trape(0, PI / 6.0, 6, my_function) << endl;
+	cout << Q2::simpson(0, PI / 6.0, 6, my_function) << endl;
 	return 0;
 }
