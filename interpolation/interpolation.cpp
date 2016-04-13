@@ -59,6 +59,11 @@ inter::CubicInter::pursuit(const std::vector<double>& A, const std::vector<doubl
 		res[k] = Y[k] - beta[k] * res[k + 1];
 	}
 
+	for (int i = 0; i < (int)res.size(); ++i) {
+		printf("%.6f\t", res[i]);
+	}
+	puts("");
+
 	return res;
 }
 
