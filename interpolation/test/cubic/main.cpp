@@ -1,6 +1,6 @@
 /* **********************************************
 
-  File Name: cubic.cpp
+  File Name: main.cpp
 
   Author: zhengdongjian@tju.edu.cn
 
