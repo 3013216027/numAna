@@ -103,6 +103,30 @@ namespace inter {
 			std::vector<std::vector<double> > table; /* 均差表 */
 			bool updated; /* 均差表是否计算完毕 */
 	};
+
+	/* 多项式插值(拉格朗日) */
+	class Poly;
+	class Poly {
+		public:
+			/* constructor */
+			Poly();
+
+			/* add point */
+			Poly* push(std::pair<double, double> point);
+			Poly* push(double x_ray, double y_ray);
+
+			/* get size */
+			size_t size() const;
+			/* print & calculate */
+			Poly* update();
+			Poly* print();
+			double get(double x);
+
+		private:
+			std::vector<std::pair<double, double> > data; /* 插值点 */
+			std::vector<double> mother; /* 插值基函数分母部分 */
+			bool updated;
+	};
 };
 
 #endif

@@ -328,6 +328,9 @@ inter::NewtonInter* inter::NewtonInter::print() {
 }
 
 double inter::NewtonInter::get(double x) {
+	if (!this->updated) {
+		this->update();
+	}
 	int lines = size();
 	double result = 0.0;
 	for (int i = 0; i < lines; ++i) {
@@ -338,4 +341,88 @@ double inter::NewtonInter::get(double x) {
 		result += tp;
 	}
 	return result;
+}
+
+/**
+ * 拉格朗日多项式插值
+ */
+/* constructor */
+inter::Poly::Poly() {
+	this->updated = false;
+}
+
+/* add point */
+inter::Poly* inter::Poly::push(std::pair<double, double> point) {
+	this->data.push_back(point);
+	return this;
+}
+
+
+inter::Poly* inter::Poly::push(double x_ray, double y_ray) {
+	this->data.push_back(std::make_pair(x_ray, y_ray));
+	return this;
+}
+
+/* get size */
+size_t inter::Poly::size() const {
+	return data.size();
+}
+
+/* update */
+inter::Poly* inter::Poly::update() {
+	if (!updated) {
+		int sz = this->size();
+		mother = std::vector<double>(sz);
+
+		for (int i = 0; i < sz; ++i) {
+			mother[i] = 1.0;
+			for (int j = 0; j < sz; ++j) {
+				if (j == i) continue;
+				mother[i] *= (data[i].first - data[j].first);
+			}
+		}
+
+		updated = true;
+	}
+	return this;
+}
+
+/* print */
+inter::Poly* inter::Poly::print() {
+	if (!updated) {
+		update();
+	}
+
+	int sz = size();
+	fprintf(stdout, "L[%d](x) = \n", sz - 1); //sz个点 => sz-1次
+	for (int i = 0, last; i < sz; ++i) {
+		last = (i == sz - 1 ? sz - 2 : sz - 1);
+		fprintf(stdout, i == 0 ? "   " : " + ");
+		for (int j = 0; j < sz; ++j) {
+			if (j == i) continue;
+			fprintf(stdout, "(x-%.5f)%c", data[j].first, j == last ? '/' : '*');
+		}
+		fprintf(stdout, "%.5f\n", mother[i]);
+	}
+	fprintf(stdout, "\n");
+
+	return this;
+}
+
+double inter::Poly::get(double x) {
+	if (!updated) {
+		update();
+	}
+	
+	int sz = size();
+	double res = 0.0;
+	for (int i = 0, tp; i < sz; ++i) {
+		tp = 1.0;
+		for (int j = 0; j < sz; ++j) {
+			if (j == i) continue;
+			tp *= x - data[j].first;
+		}
+		res += tp / mother[i];
+	}
+	return res;
 }
