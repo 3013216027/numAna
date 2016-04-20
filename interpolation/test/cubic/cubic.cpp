@@ -10,7 +10,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "interpolation.cpp"
+#include "../../interpolation.cpp"
 using namespace inter;
 
 int main() {
