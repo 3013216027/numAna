@@ -371,6 +371,7 @@ size_t inter::Poly::size() const {
 /* update */
 inter::Poly* inter::Poly::update() {
 	if (!updated) {
+		std::sort(data.begin(), data.end());
 		int sz = this->size();
 		mother = std::vector<double>(sz);
 
