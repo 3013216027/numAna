@@ -1,6 +1,6 @@
 /* **********************************************
 
-  File Name: newton.cpp
+  File Name: main.cpp
 
   Author: zhengdongjian@tju.edu.cn
 
@@ -35,7 +35,7 @@ int main() {
 	NewtonInter* test1 = new NewtonInter;
 	double tag1 = 0.596;
 
-	read_dot(test1, "newton1.dot")->print();
+	read_dot(test1, "case1.dot")->print();
 	fprintf(stdout, "f(%f)= %.5f\n", tag1, test1->get(tag1));
 
 	delete test1;
