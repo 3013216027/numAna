@@ -1,6 +1,6 @@
 /* **********************************************
 
-  File Name: main.cpp
+  File Name: cubic.cpp
 
   Author: zhengdongjian@tju.edu.cn
 
@@ -10,34 +10,40 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "../../interpolation.cpp"
+#include "../../interpolation.h"
 using namespace inter;
 
+CubicInter* read_dot(CubicInter* p, const char* file_name) {
+	assert(p != NULL);
+
+	FILE* fin = fopen(file_name, "r");
+	assert (fin != NULL);
+
+	while (fgetc(fin) != '\n'); //ignore first line, which is table header
+	
+	//readin the final condition
+	pair<double, double> ending;
+	fscanf(fin, "%lf, %lf", &ending.first, &ending.second);
+	
+	//readin the rest data(points)
+	pair<double, double> pin;
+	while (fscanf(fin, "%lf, %lf", &pin.first, &pin.second) != EOF) {
+		p->push(pin);
+	}
+
+	return p->set(CubicInter::CONDITION::FIRST, ending.first, ending.second);
+	//or: return p;
+}
+
 int main() {
-	CubicInter* a = new CubicInter();
-	/*
-	a->push(0.25, 0.5000)
-		->push(0.30, 0.5477)
-		->push(0.39, 0.6708)
-		->push(0.45, 0.6708)
-		->push(0.53, 0.7280)
-		->set(CubicInter::CONDITION::FIRST, 1.0000, 0.6868)
-		->print();
-		*/
-	/*
-	a->push(27.7, 4.1)
-		->push(28, 4.3)
-		->push(29, 4.1)
-		->push(30, 3.0)
-		->set(CubicInter::CONDITION::FIRST, 3.0, -4.0)
-		->print();
-	*/
-	NewtonInter* b = new NewtonInter();
-	double x = b->push(0.4, 0.41075)->push(0.55, 0.57815)->push(0.65, 0.69675)
-		->push(0.8, 0.88811)->push(0.9, 1.02652)->print()
-		->get(0.596);
-	cout << x << endl;
-	delete a;
-	delete b;
+	CubicInter* test1 = new CubicInter();
+	read_dot(test1, "cubic1.dot")->print();
+	
+	CubicInter* test2 = new CubicInter();
+	read_dot(test2, "cubic2.dot")->print();
+	
+	delete test1;
+	delete test2;
+	
 	return 0;
 }
