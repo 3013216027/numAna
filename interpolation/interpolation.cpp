@@ -213,14 +213,19 @@ double pow3(double x) {
 	return x * x * x;
 }
 
+const double CUBIC_GET_EPS = 1e-8;
+
 double inter::CubicInter::get(double x) {
 	double sum = 0.0;
-	int sz = this->size();
+	int sz = this->size() - 1;
 	for (int j = 0; j < sz; ++j) {
-		sum += M[j] / 6.0 / H[j] * pow3(data[j + 1].first - x);
-		sum += M[j + 1] / 6.0 / H[j] * pow3(x - data[j].first);
-		sum += (data[j].second / H[j] - M[j] * H[j] / 6.0) * (data[j + 1].first - x);
-		sum += (data[j + 1].second / H[j] - M[j + 1] * H[j] / 6.0) * (x - data[j].first);
+		if (x > data[j].first - CUBIC_GET_EPS && x < data[j + 1].first + CUBIC_GET_EPS) {
+			sum += M[j] / 6.0 / H[j] * pow3(data[j + 1].first - x);
+			sum += M[j + 1] / 6.0 / H[j] * pow3(x - data[j].first);
+			sum += (data[j].second / H[j] - M[j] * H[j] / 6.0) * (data[j + 1].first - x);
+			sum += (data[j + 1].second / H[j] - M[j + 1] * H[j] / 6.0) * (x - data[j].first);
+			return sum;
+		}
 	}
 	return sum;
 }
