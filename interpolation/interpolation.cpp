@@ -302,7 +302,8 @@ inter::NewtonInter* inter::NewtonInter::update() {
 		for (int i = 1; i < lines; ++i) {
 			for (int j = i; j < lines; ++j) {
 				//table[j][i]
-				table[j][i] = (table[j][i - 1] - table[j - 1][i - 1]) / (data[j].first - data[i - 1].first);
+				table[j][i] = (table[j][i - 1] - table[j - 1][i - 1]) / (data[j].first - data[j - i].first);
+				fprintf(stdout, "table[%d][%d] = %.5f\n", j, i, table[j][i]);
 			}
 		}
 		this->updated = true;
@@ -311,12 +312,15 @@ inter::NewtonInter* inter::NewtonInter::update() {
 }
 
 inter::NewtonInter* inter::NewtonInter::print() {
+	if (!this->updated) {
+		this->update();
+	}
 	fprintf(stdout, "S(x) = \n");
 	int lines = size();
 	for (int i = 0; i < lines; ++i) {
 		fprintf(stdout, "    %.5f", table[i][i]);
 		for (int j = 0; j < i; ++j) {
-			fprintf(stdout, " * (x - %.5f)", data[j + 1].first);
+			fprintf(stdout, " * (x - %.5f)", data[j].first);
 		}
 		fprintf(stdout, "%s", i == lines - 1 ? "\n\n" : "\n  + ");
 	}
@@ -329,7 +333,7 @@ double inter::NewtonInter::get(double x) {
 	for (int i = 0; i < lines; ++i) {
 		double tp = table[i][i];
 		for (int j = 0; j < i; ++j) {
-			tp *= (x - data[j + 1].first);
+			tp *= (x - data[j].first);
 		}
 		result += tp;
 	}
