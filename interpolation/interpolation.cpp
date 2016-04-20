@@ -15,6 +15,68 @@
 #include "interpolation.h"
 
 /**
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * 追赶法求对角占优三对角线方程组
+ * ___                                ___  __       __     __       __
+ * | b1 c1                              |  |   x1    |     |   f1    |
+ * | a2 b2 c2                           |  |   x2    |     |   f2    |
+ * |    a3 b3 c3                        |  |   x3    |     |   f3    |
+ * |       .  .  .                      |  |   .     |     |   .     |
+ * |         .  .  .                    |  |   .     |  =  |   .     |
+ * |           .  .  .                  |  |   .     |     |   .     |
+ * |             a_{n-1} b_{n-1} c_{n-1}|  | x_{n-1} |     | f_{n-1} |
+ * |                     a_n     b_n    |  |  x_n    |     |   f_n   |
+ * ---                                ---  --       --     --       --
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ */
+std::vector<double>
+inter::CubicInter::pursuit(const std::vector<double>& A, const std::vector<double>& B,
+	const std::vector<double>& C, const std::vector<double>& F) {
+	// array A has offset of 1 !!
+	assert(A.size() == B.size() - 1);
+	assert(A.size() == C.size());
+	assert(A.size() == F.size() - 1);
+
+	std::vector<double> beta(A.size());
+	std::vector<double> Y(B.size());
+
+	beta[0] = C[0] / B[0];
+	for (int i = 1; i < (int)beta.size(); ++i) {
+		beta[i] = C[i] / (B[i] - A[i - 1] * beta[i - 1]);
+	}
+
+	Y[0] = F[0] / B[1];
+	for (int j = 1; j < (int)Y.size(); ++j) {
+		Y[j] = (F[j] - A[j - 1] * Y[j - 1]) / (B[j] - A[j - 1] * beta[j - 1]);
+	}
+
+	std::vector<double> res(B.size());
+	res[res.size() - 1] = Y[res.size() - 1];
+	for (int k = res.size() - 2; k >= 0; --k) {
+		res[k] = Y[k] - beta[k] * res[k + 1];
+	}
+
+	/*
+	for (int i = 0; i < (int)res.size(); ++i) {
+		printf("%.6f\t", res[i]);
+	}
+	puts("");
+	*/
+
+	return res;
+}
+
+/* print array */
+void inter::CubicInter::print(const std::vector<double>& tp) {
+	fprintf(stderr, "[ ");
+	int sz = tp.size();
+	for (int i = 0; i < sz; ++i) {
+		fprintf(stderr, "%.5f%s", tp[i], i == sz - 1 ? " ]" : ", ");
+	}
+}
+
+
+/**
  * 三次插值
  */
 /* constructor */
@@ -30,30 +92,30 @@ inter::CubicInter::CubicInter(int size):inter::CubicInter::CubicInter() {
 
 
 /* get size of data */
-inline size_t inter::CubicInter::size() const {
+size_t inter::CubicInter::size() const {
 	return this->data.size();
 }
 
 
 /* add point */
-inline inter::CubicInter* inter::CubicInter::push(double x_ray, double y_ray) {
+inter::CubicInter* inter::CubicInter::push(double x_ray, double y_ray) {
 	this->push(std::make_pair(x_ray, y_ray));
 	return this;
 }
 
-inline inter::CubicInter* inter::CubicInter::push(std::pair<double, double> point) {
+inter::CubicInter* inter::CubicInter::push(std::pair<double, double> point) {
 	this->data.push_back(point);
 	return this;
 }
 
 
 /* remove point */
-inline inter::CubicInter* inter::CubicInter::pop() {
+inter::CubicInter* inter::CubicInter::pop() {
 	this->data.pop_back();
 	return this;
 }
 
-inline inter::CubicInter* inter::CubicInter::erase(size_t index) {
+inter::CubicInter* inter::CubicInter::erase(size_t index) {
 	if (index == this->size() - 1) {
 		return this->pop();
 	}
@@ -61,7 +123,7 @@ inline inter::CubicInter* inter::CubicInter::erase(size_t index) {
 	return this;
 }
 
-inline inter::CubicInter* inter::CubicInter::erase(size_t index, size_t count) {
+inter::CubicInter* inter::CubicInter::erase(size_t index, size_t count) {
 	if (count == 1) {
 		return this->erase(index);
 	}
@@ -147,7 +209,7 @@ inter::CubicInter* inter::CubicInter::print() {
 	return this;
 }
 
-inline double pow3(double x) {
+double pow3(double x) {
 	return x * x * x;
 }
 
@@ -174,24 +236,24 @@ inter::NewtonInter::NewtonInter() {
 }
 
 /* add point */
-inline inter::NewtonInter* inter::NewtonInter::push(double x_ray, double y_ray) {
+inter::NewtonInter* inter::NewtonInter::push(double x_ray, double y_ray) {
 	this->push(std::make_pair(x_ray, y_ray));
 	return this;
 }
 
-inline inter::NewtonInter* inter::NewtonInter::push(std::pair<double, double> point) {
+inter::NewtonInter* inter::NewtonInter::push(std::pair<double, double> point) {
 	this->data.push_back(point);
 	return this;
 }
 
 
 /* remove point */
-inline inter::NewtonInter* inter::NewtonInter::pop() {
+inter::NewtonInter* inter::NewtonInter::pop() {
 	this->data.pop_back();
 	return this;
 }
 
-inline inter::NewtonInter* inter::NewtonInter::erase(size_t index) {
+inter::NewtonInter* inter::NewtonInter::erase(size_t index) {
 	if (index == this->size() - 1) {
 		return this->pop();
 	}
@@ -199,7 +261,7 @@ inline inter::NewtonInter* inter::NewtonInter::erase(size_t index) {
 	return this;
 }
 
-inline inter::NewtonInter* inter::NewtonInter::erase(size_t index, size_t count) {
+inter::NewtonInter* inter::NewtonInter::erase(size_t index, size_t count) {
 	if (count == 1) {
 		return this->erase(index);
 	}
@@ -208,7 +270,7 @@ inline inter::NewtonInter* inter::NewtonInter::erase(size_t index, size_t count)
 }
 
 /* get size */
-inline size_t inter::NewtonInter::size() const {
+size_t inter::NewtonInter::size() const {
 	return data.size();
 }
 

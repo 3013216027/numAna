@@ -11,6 +11,7 @@
 using namespace std;
 
 #include "../../interpolation.h"
+
 using namespace inter;
 
 CubicInter* read_dot(CubicInter* p, const char* file_name) {
@@ -37,10 +38,12 @@ CubicInter* read_dot(CubicInter* p, const char* file_name) {
 
 int main() {
 	CubicInter* test1 = new CubicInter();
-	read_dot(test1, "cubic1.dot")->print();
+	read_dot(test1, "cubic1.dot");
+	test1->print();
 	
 	CubicInter* test2 = new CubicInter();
-	read_dot(test2, "cubic2.dot")->print();
+	read_dot(test2, "cubic2.dot");
+	test1->print();
 	
 	delete test1;
 	delete test2;

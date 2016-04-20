@@ -1,17 +1,17 @@
-default: interpolation.o cubic1.o cubic2.o
-	g++ -std=c++11 -O2 -o cubic1.exe cubic1.o interpolation.o
-	g++ -std=c++11 -O2 -o cubic2.exe cubic2.o interpolation.o
+CC=g++
+core=interpolation
+
+default: $(core).o
+	$(CC) -std=c++11 -o cubic.exe ../../$(core).o cubic.cpp
 	@echo "compile success!"
-	@echo "run './cubic1.exe' and './cubic2.exe' for case test..."
+	@echo "run 'make run' for case test..."
 	@sleep 1
-	./cubic1.exe
-	./cubic2.exe
 
-interpolation.o: ../../interpolation.cpp
-	g++ -std=c++11 -O2 -c ../../interpolation.cpp
+run: cubic.exe
+	./cubic.exe
 
-cubic1.o: cubic1.cpp
-	g++ -std=c++11 -O2 -c cubic1.cpp
+$(core).o:
+	$(CC) -std=c++11 -c -o ../../$(core).o ../../$(core).cpp
 
-cubic2.o: cubic2.cpp
-	g++ -std=c++11 -O2 -c cubic2.cpp
+clean:
+	rm -rf *.o
