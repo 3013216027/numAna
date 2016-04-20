@@ -59,10 +59,12 @@ inter::CubicInter::pursuit(const std::vector<double>& A, const std::vector<doubl
 		res[k] = Y[k] - beta[k] * res[k + 1];
 	}
 
+	/*
 	for (int i = 0; i < (int)res.size(); ++i) {
 		printf("%.6f\t", res[i]);
 	}
 	puts("");
+	*/
 
 	return res;
 }
@@ -303,7 +305,7 @@ inter::NewtonInter* inter::NewtonInter::update() {
 			for (int j = i; j < lines; ++j) {
 				//table[j][i]
 				table[j][i] = (table[j][i - 1] - table[j - 1][i - 1]) / (data[j].first - data[j - i].first);
-				fprintf(stdout, "table[%d][%d] = %.5f\n", j, i, table[j][i]);
+				//fprintf(stdout, "table[%d][%d] = %.5f\n", j, i, table[j][i]);
 			}
 		}
 		this->updated = true;
@@ -318,11 +320,11 @@ inter::NewtonInter* inter::NewtonInter::print() {
 	fprintf(stdout, "S(x) = \n");
 	int lines = size();
 	for (int i = 0; i < lines; ++i) {
-		fprintf(stdout, "    %.5f", table[i][i]);
+		fprintf(stdout, (i == 0 ? "   %.5f" : "%.5f"), table[i][i]);
 		for (int j = 0; j < i; ++j) {
 			fprintf(stdout, " * (x - %.5f)", data[j].first);
 		}
-		fprintf(stdout, "%s", i == lines - 1 ? "\n\n" : "\n  + ");
+		fprintf(stdout, "%s", i == lines - 1 ? "\n\n" : "\n + ");
 	}
 	return this;
 }
