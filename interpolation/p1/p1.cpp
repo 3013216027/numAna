@@ -35,7 +35,7 @@ int main() {
 
 	//Newton Interpolation
 	cout << "Newton Interpolation: " << endl;
-	ni->print();
+	ni->print(true);
 	for (int i = 0; i < (int)xs.size(); ++i) {
 		fprintf(stdout, "P[4](%.5f) = %.5f\n", xs[i], ni->get(xs[i]));
 	}
@@ -43,7 +43,7 @@ int main() {
 
 	//Cubic Interpolation
 	cout << "Cubic Interpolation: " << endl;
-	ci->set(CubicInter::CONDITION::FIRST, 0, 0)->print(); //natural condition o_O
+	ci->set(CubicInter::CONDITION::FIRST, 0, 0)->print(true); //natural condition o_O
 	for (int i = 0; i < (int)xs.size(); ++i) {
 		fprintf(stdout, "S(%.5f) = %.5f\n", xs[i], ci->get(xs[i]));
 	}

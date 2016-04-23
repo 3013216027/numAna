@@ -38,12 +38,12 @@ int main() {
 
 	//Lagrange Interpolation
 	cout << "Lagrange Interpolation: " << endl;
-	li->print();
+	li->print(true);
 	fprintf(stdout, "--------------------------------------------\n");
 
 	//Cubic Interpolation
 	cout << "Cubic Interpolation: " << endl;
-	ci->set(CubicInter::CONDITION::FIRST, INF, 1.0 / 16.0)->print();
+	ci->set(CubicInter::CONDITION::FIRST, INF, 1.0 / 16.0)->print(true);
 	cout << ci->get(1.0) << endl;
 	
 	//free memory :lol:

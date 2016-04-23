@@ -210,13 +210,10 @@ inter::CubicInter* inter::CubicInter::print(bool matlab) {
         }        
     } else {
         fprintf(stdout, "x = %.5f:0.02:%.5f;\n", data[0].first, data[sz].first);
-        fprintf(stdout, "Sx = ");
+        fprintf(stdout, "Sx=");
         for (int j = 0; j < sz; ++j) {
-            if (j > 0) {
-                fprintf(stdout, "     ");
-            }
-            fprintf(stdout, "%.5f * power(%.5f - x, 3) + %.5f * power(x - %.5f, 3)\
-+ %.5f * (%.5f - x) + %.5f * (x - %.5f).*(x >= %.5f & x <= %.5f)%s\n",
+            fprintf(stdout, "%.5f.*power(%.5f-x,3)+%.5f.*power(x-%.5f,3)\
++%.5f.*(%.5f-x)+%.5f.*(x-%.5f).*(x>=%.5f & x<=%.5f)%s\n",
                 M[j] / 6.0 / H[j], data[j + 1].first, M[j + 1] / 6.0 / H[j], data[j].first,
                 data[j].second / H[j] - M[j] * H[j] / 6.0, data[j + 1].first,
                 data[j + 1].second / H[j] - M[j + 1] * H[j] / 6.0, data[j].first,
@@ -350,13 +347,13 @@ inter::NewtonInter* inter::NewtonInter::print(bool matlab) {
 		}
 	} else {
 		fprintf(stdout, "x = %.5f:0.02:%.5f;\n", data[0].first, data[lines - 2].first);
-		fprintf(stdout, "Sx = ");
+		fprintf(stdout, "Sx=");
 		for (int i = 0; i < lines; ++i) {
 			fprintf(stdout, "%.5f", table[i][i]);
 			for (int j = 0; j < i; ++j) {
-				fprintf(stdout, " * (x - %.5f)", data[j].first);
+				fprintf(stdout, ".*(x-%.5f)", data[j].first);
 			}
-			fprintf(stdout, "%s", i == lines - 1 ? ";\n" : " + ");
+			fprintf(stdout, "%s", i == lines - 1 ? ";\n" : "...\n+");
 		}
 	}
 	return this;
@@ -445,15 +442,15 @@ inter::Poly* inter::Poly::print(bool matlab) {
 	} else {
 		fprintf(stdout, "x = %.5f:0.02:%.5f;\n", data[0].first, data[sz - 1].first);
 		/* the expression here is a little too long, so we release the spaces. between symbols and words:) */
-		fprintf(stdout, "L%dx =", sz - 1);
+		fprintf(stdout, "L%dx=", sz - 1);
 		for (int i = 0, last; i < sz; ++i) {
 			last = (i == sz - 1 ? sz - 2 : sz - 1);
 			fprintf(stdout, i == 0 ? "" : "+");
 			for (int j = 0; j < sz; ++j) {
 				if (j == i) continue;
-				fprintf(stdout, "(x-%.5f)%c", data[j].first, j == last ? '/' : '*');
+				fprintf(stdout, "(x-%.5f).%c", data[j].first, j == last ? '/' : '*');
 			}
-			fprintf(stdout, "%.5f", mother[i]);
+			fprintf(stdout, "%.5f...\n", mother[i]);
 		}
 		fprintf(stdout, ";\n");
 	}
