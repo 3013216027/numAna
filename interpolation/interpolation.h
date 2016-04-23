@@ -63,7 +63,7 @@ namespace inter {
 			CubicInter* prepare();
 
 			/* print&caculate */
-			CubicInter* print();
+			CubicInter* print(bool matlab = false);
 			double get(double x);
 
 		private:
@@ -95,7 +95,7 @@ namespace inter {
 			size_t size() const;
 			/* print&calculate */
 			NewtonInter* update();
-			NewtonInter* print();
+			NewtonInter* print(bool matlab = false);
 			double get(double x);
 
 		private:
@@ -119,7 +119,7 @@ namespace inter {
 			size_t size() const;
 			/* print & calculate */
 			Poly* update();
-			Poly* print();
+			Poly* print(bool matlab = false);
 			double get(double x);
 
 		private:
