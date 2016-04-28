@@ -201,23 +201,24 @@ inter::CubicInter* inter::CubicInter::print(bool matlab) {
         fprintf(stdout, "S(x) = \n");
         for (int j = 0; j < sz; ++j) {
             fprintf(
-                stdout, "  %.5f <= x <= %.5f:  %.5f * (%.5f - x)^3 + %.5f * (x - %.5f)^3\
-+ %.5f * (%.5f - x) + %.5f * (x - %.5f)\n", data[j].first, data[j + 1].first,
+                stdout, "  %.6f <= x <= %.6f:  %.6f * (%.6f - x)^3 + %.6f * (x - %.6f)^3\
++ %.6f * (%.6f - x) + %.6f * (x - %.6f)\n", data[j].first, data[j + 1].first,
                 M[j] / 6.0 / H[j], data[j + 1].first, M[j + 1] / 6.0 / H[j], data[j].first,
                 data[j].second / H[j] - M[j] * H[j] / 6.0, data[j + 1].first,
                 data[j + 1].second / H[j] - M[j + 1] * H[j] / 6.0, data[j].first
             );
         }        
     } else {
-        fprintf(stdout, "x = %.5f:0.02:%.5f;\n", data[0].first, data[sz].first);
-        fprintf(stdout, "Sx=");
+        fprintf(stdout, "x = %.6f:0.02:%.6f;\n", data[0].first, data[sz].first);
+        fprintf(stdout, "Sx=@(x) ");
         for (int j = 0; j < sz; ++j) {
-            fprintf(stdout, "%.5f.*power(%.5f-x,3)+%.5f.*power(x-%.5f,3)\
-+%.5f.*(%.5f-x)+%.5f.*(x-%.5f).*(x>=%.5f & x<=%.5f)%s\n",
+            fprintf(stdout, "(%.6f.*(%.6f-x).^3+%.6f.*(x-%.6f).^3\
++%.6f.*(%.6f-x)+%.6f.*(x-%.6f)).*(x>=%.6f & x%s%.6f)%s\n",
                 M[j] / 6.0 / H[j], data[j + 1].first, M[j + 1] / 6.0 / H[j], data[j].first,
                 data[j].second / H[j] - M[j] * H[j] / 6.0, data[j + 1].first,
-                data[j + 1].second / H[j] - M[j + 1] * H[j] / 6.0, data[j].first,
-                data[j].first, data[j + 1].first, j == sz - 1 ? ";" : "+...");
+                data[j + 1].second / H[j] - M[j + 1] * H[j] / 6.0, data[j].first, data[j].first,
+                j == sz - 1 ? "<=" : "<", data[j + 1].first, j == sz - 1 ? ";" : "+..."
+            );
         }
     }
 	return this;
@@ -234,6 +235,18 @@ double inter::CubicInter::get(double x) {
 	int sz = this->size() - 1;
 	for (int j = 0; j < sz; ++j) {
 		if (x > data[j].first - CUBIC_GET_EPS && x < data[j + 1].first + CUBIC_GET_EPS) {
+			/*fprintf(stdout, "[DEBUG] %.5f locate at range [%.5f, %.5f]\n", x, data[j].first, data[j + 1].first);
+			fprintf(
+				stdout, "%f * (%f - x)^3 + %f * (x - %f)^3 + %f * (%f - x) + %f * (x - %f)\n",
+				M[j] / 6.0 / H[j],
+				data[j + 1].first,
+				M[j + 1] / 6.0 / H[j],
+				data[j].first,
+				data[j].second / H[j] - M[j] * H[j] / 6.0,
+				data[j + 1].first,
+				data[j + 1].second / H[j] - M[j + 1] * H[j] / 6.0,
+				data[j].first
+			);*/
 			sum += M[j] / 6.0 / H[j] * pow3(data[j + 1].first - x);
 			sum += M[j + 1] / 6.0 / H[j] * pow3(x - data[j].first);
 			sum += (data[j].second / H[j] - M[j] * H[j] / 6.0) * (data[j + 1].first - x);
@@ -241,6 +254,7 @@ double inter::CubicInter::get(double x) {
 			return sum;
 		}
 	}
+	//throw OUT_OF_RANGE_ERROR;
 	return sum;
 }
 
@@ -347,7 +361,7 @@ inter::NewtonInter* inter::NewtonInter::print(bool matlab) {
 		}
 	} else {
 		fprintf(stdout, "x = %.5f:0.02:%.5f;\n", data[0].first, data[lines - 2].first);
-		fprintf(stdout, "Sx=");
+		fprintf(stdout, "Sx= @(x) ");
 		for (int i = 0; i < lines; ++i) {
 			fprintf(stdout, "%.5f", table[i][i]);
 			for (int j = 0; j < i; ++j) {
@@ -414,7 +428,6 @@ inter::Poly* inter::Poly::update() {
 				mother[i] *= (data[i].first - data[j].first);
 			}
 		}
-
 		updated = true;
 	}
 	return this;
@@ -429,30 +442,27 @@ inter::Poly* inter::Poly::print(bool matlab) {
 	int sz = size();
 	if (!matlab) {
 		fprintf(stdout, "L[%d](x) = \n", sz - 1); //sz个点 => sz-1次
-		for (int i = 0, last; i < sz; ++i) {
-			last = (i == sz - 1 ? sz - 2 : sz - 1);
+		for (int i = 0; i < sz; ++i) {
 			fprintf(stdout, i == 0 ? "   " : " + ");
 			for (int j = 0; j < sz; ++j) {
 				if (j == i) continue;
-				fprintf(stdout, "(x-%.5f)%c", data[j].first, j == last ? '/' : '*');
+				fprintf(stdout, "(x-%.5f)*", data[j].first);
 			}
-			fprintf(stdout, "%.5f\n", mother[i]);
+			fprintf(stdout, "%.5f./%.5f\n", data[i].second, mother[i]);//y_k*l_k = mul[(x-x_j)]/(mother[i]/y_k)
 		}
 		fprintf(stdout, "\n");		
 	} else {
 		fprintf(stdout, "x = %.5f:0.02:%.5f;\n", data[0].first, data[sz - 1].first);
 		/* the expression here is a little too long, so we release the spaces. between symbols and words:) */
-		fprintf(stdout, "L%dx=", sz - 1);
-		for (int i = 0, last; i < sz; ++i) {
-			last = (i == sz - 1 ? sz - 2 : sz - 1);
+		fprintf(stdout, "L%dx= @(x) ", sz - 1);
+		for (int i = 0; i < sz; ++i) {
 			fprintf(stdout, i == 0 ? "" : "+");
 			for (int j = 0; j < sz; ++j) {
 				if (j == i) continue;
-				fprintf(stdout, "(x-%.5f).%c", data[j].first, j == last ? '/' : '*');
+				fprintf(stdout, "(x-%.5f).*", data[j].first);
 			}
-			fprintf(stdout, "%.5f...\n", mother[i]);
+			fprintf(stdout, "%.5f./%.5f%s\n", data[i].second, mother[i], (i == sz - 1 ? ";" : "..."));
 		}
-		fprintf(stdout, ";\n");
 	}
 
 	return this;
@@ -464,14 +474,17 @@ double inter::Poly::get(double x) {
 	}
 	
 	int sz = size();
-	double res = 0.0;
-	for (int i = 0, tp; i < sz; ++i) {
+	double res = 0.0, tp;
+	for (int i = 0; i < sz; ++i) {
 		tp = 1.0;
 		for (int j = 0; j < sz; ++j) {
 			if (j == i) continue;
+			//fprintf(stdout, "tp.from %.5f\n", tp);
 			tp *= x - data[j].first;
+			//fprintf(stdout, "tp * (%.5f - %.5f) => %.5f\n", x, data[j].first, tp);
 		}
-		res += tp / mother[i];
+		res += tp * data[i].second / mother[i];
+		//fprintf(stdout, "tp = %.5f, res = %.5f\n", tp, res);
 	}
 	return res;
 }

@@ -13,7 +13,7 @@ using namespace std;
 #include "../interpolation.h"
 using namespace inter;
 
-const double INF = 1e8; //infinity, not stable when >= 10^8
+const double INF = 100; //infinity, not stable when >= 10^8
 
 vector<pair<double, double> > points;
 
@@ -39,12 +39,17 @@ int main() {
 	//Lagrange Interpolation
 	cout << "Lagrange Interpolation: " << endl;
 	li->print(true);
+	// for (int i = 0; i < 65; ++i) {
+	// 	cout << i << " -> " << li->get(i) << endl;
+	// }
 	fprintf(stdout, "--------------------------------------------\n");
 
 	//Cubic Interpolation
 	cout << "Cubic Interpolation: " << endl;
 	ci->set(CubicInter::CONDITION::FIRST, INF, 1.0 / 16.0)->print(true);
-	cout << ci->get(1.0) << endl;
+	// for (int i = 0; i < 65; ++i) {
+	// 	 cout << i << " => " << ci->get(i) << endl;
+	// }
 	
 	//free memory :lol:
 	delete li;
