@@ -52,5 +52,6 @@ int main() {
 	delete ci;
 	delete ni;
 
+	system("pause");
 	return 0;
 }

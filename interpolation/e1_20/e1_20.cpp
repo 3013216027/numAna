@@ -29,6 +29,7 @@ int main() {
 	p->set(CubicInter::CONDITION::SECOND, 0, 0)->print();
 
 	delete p;
-
+	
+	system("pause");
 	return 0;
 }
