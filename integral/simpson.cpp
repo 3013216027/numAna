@@ -51,6 +51,7 @@ const std::pair<bool, double> OPT_DEFAULT = std::make_pair(false, 0);
 
 double simpson(double a, double b, double (*func)(double),
     double EPS = 1e-6, std::pair<bool, double> opt = OPT_DEFAULT) {
+    if (a >  b) swap(a, b);
     double mid = 0.5 * (a + b);
     if (DEBUG) {
         fprintf(stdout, "--------------------------------------------");

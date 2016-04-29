@@ -26,6 +26,7 @@ const bool DEBUG = true;
  * -----------------------------------
  */
 double romberg(double a, double b, double (*func)(double), double EPS = 1e-6) {
+    if (a >  b) swap(a, b);
     int k = 1;
     double h = b - a, h2, h4;
     vector<vector<double> > T;
