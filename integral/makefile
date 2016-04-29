@@ -13,6 +13,9 @@ default:
 	./4_9.exe
 
 1:
+	@echo 'generating data for e4_1...'
+	g++ -std=c++11 -O2 -o e4_1_generator.exe e4_1_generator.cpp
+	./e4_1_generator.exe | tee e4_1.in
 	g++ -std=c++11 -O2 -o e4_1.exe e4_1.cpp
-	@echo 'compile successfully!'
+	@echo 'compile successfully! running now...'
 	./e4_1.exe
